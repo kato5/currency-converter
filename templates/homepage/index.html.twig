@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}kfrydrych CV {% endblock %}
+
+{% block javascripts %} 
+   <script language = "javascript" 
+      src = "https://code.jquery.com/jquery-2.2.4.min.js"></script> 
+   
+   <script language = "javascript">  
+      $(document).ready(function(){   
+         $("#convert").on("click", function(event){  
+             var amount = $('#amount_rub').val();
+             
+            $.ajax({  
+               url:        '{{ path('converter_ajax') }}',  
+               type:       'POST',   
+               dataType:   'json',  
+               async:      true,  
+               data: { amount: amount},
+               
+
+                beforeSend: function( xhr ) {
+                    console.log('trwa obliczanie....');
+                },  
+               success: function(data, status) {  
+                  var e = $('<tr><th>Name</th><th>Address</th></tr>');  
+                  $('#student').html('');  
+                  $('#student').append(e);  
+                  
+                  for(i = 0; i < data.length; i++) {  
+                     student = data[i];  
+                     var e = $('<tr><td id = "name"></td><td id = "address"></td></tr>');
+                     
+                     $('#name', e).html(student['name']);  
+                     $('#address', e).html(student['address']);  
+                     $('#student').append(e);  
+                  }  
+               },  
+               error : function(xhr, textStatus, errorThrown) {  
+                  alert('Ajax request failed.');  
+               },
+                complete: function () {
+                    console.log('obliczono!');
+                }
+            });  
+         });  
+      });  
+   </script> 
+{% endblock %}
+
+{% block body %}
+{#    <form action="{{ path('converter_ajax') }}">#}
+        RUB: <input id="amount_rub" type="text" name="amount_rub">
+{#        <input id="convert" type="submit" value="Convert"br /><br />#}
+        <a id = "convert" href = "#">Convert</a> <br /><br />
+        PLN: <input type="text" name="amount_pln" readonly>
+{#    </form>#}
+    
+   </br> 
+   </br>  
+   
+   <table class = "table">  
+      <tbody id = "student"></tbody>  
+   </table>  
+{% endblock %}
